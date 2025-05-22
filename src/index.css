@@ -27,7 +27,7 @@ input {
 }
 
 button {
-  background-color: var(--text-color);
-  color: black;
-  border: black;
+  background-color: var(--ui-element-colors);
+  color: var(--text-color);
+  border: none;
 }
