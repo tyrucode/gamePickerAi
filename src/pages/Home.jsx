@@ -2,7 +2,8 @@
 function Home() {
     return (
         <div className="flex justify-center items-center min-h[60vh]">
-            <img src="myImage" alt="steams logo" />
+            {/* eventually make this image work. next up is to work on actual funcitonality */}
+            <img src="/src/assets/steamLogo.png" alt="steam logo" className="w-32 h-32 mb-6" />
             <form className="flex flex-col items-center space-y-6">
                 <h2 className="text-2xl font-semibold text-[var(--text-color)] mb-4">
                     Enter Steam page URL here!
