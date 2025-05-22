@@ -1,0 +1,33 @@
+@import "tailwindcss";
+
+:root {
+  --backround: #2a3347;
+  --ui-element-colors: #475a86;
+  --text-color: #adadad;
+  /* if theres any shading for 3d effects just use black */
+}
+
+body {
+  font-family: 'Outfit', sans-serif;
+  background-color: var(--backround);
+  color: var(--ui-element-colors);
+  margin: 0;
+  padding: 20px;
+
+}
+
+header>h1 {
+  font-size: 5em;
+
+}
+
+input {
+  background-color: white;
+  border-radius: 5%;
+}
+
+button {
+  background-color: var(--text-color);
+  color: black;
+  border: black;
+}
