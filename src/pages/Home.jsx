@@ -1,29 +1,51 @@
+import { useNavigate } from "react-router"
+import { useState } from "react";
 
 function Home() {
+    const navigate = useNavigate();
+    const [steamUrl, setSteamUrl] = useState("")
+
+    const onSubmit = () => {
+        e.preventDefault()
+        if (steamUrl.trim()) {
+            // Encode the URL to make it safe for URL parameters
+            const encodedUrl = encodeURIComponent(steamUrl)
+            navigate(`/userPage/${encodedUrl}`)
+        }
+    }
+
     return (
-        <div className="flex justify-center items-center min-h[60vh]">
-            {/* eventually make this image work. next up is to work on actual funcitonality */}
-            <img src="/src/assets/steamLogo.png" alt="steam logo" className="w-32 h-32 mb-6" />
-            <form className="flex flex-col items-center space-y-6">
-                <h2 className="text-2xl font-semibold text-[var(--text-color)] mb-4">
-                    Enter Steam page URL here!
-                </h2>
-                <input
-                    type="text"
-                    id="myTextBox"
-                    name="myTextBox"
-                    placeholder="https://steamcommunity.com/profiles/..."
-                    className="w-96 px-6 py-4 text-lg rounded-2xl border-2 border-[var(--ui-element-colors)] focus:outline-none focus:border-blue-400 transition-colors"
+        <div className="flex flex-col justify-center items-center min-h-[60vh]">
+            <div className="steam-card p-8 w-full max-w-md">
+                <form className="flex flex-col items-center space-y-6" onSubmit={onSubmit}>
+                    <h2 className="text-2xl font-semibold text-[var(--text-color)] mb-4 text-center">
+                        Enter Steam Profile URL
+                    </h2>
+                    <input
+                        type="text"
+                        value={steamUrl}
+                        onChange={(e) => setSteamUrl(e.target.value)}
+                        id="myTextBox"
+                        name="myTextBox"
+                        placeholder="https://steamcommunity.com/profiles/..."
+                        className="w-full px-4 py-3 text-base rounded focus:outline-none transition-all duration-200"
+                        required
+                    />
+                    <button
+                        className="w-full px-8 py-3 text-lg font-medium rounded uppercase tracking-wide"
+                        type="submit"
+                    >
+                        Find Games
+                    </button>
+                </form>
+            </div>
 
-                />
-                <button
-                    type="submit"
-                    className="px-8 py-3 text-lg font-medium rounded-xl  hover:opacity-80 transition-opacity"
-                >
-                    Submit
-                </button>
-            </form>
-
+            {/* Optional: Add some Steam-like decorative elements */}
+            <div className="mt-8 text-center">
+                <p className="text-[var(--text-secondary)] text-sm">
+                    Discover your next favorite game from your Steam library
+                </p>
+            </div>
         </div>
     )
 }

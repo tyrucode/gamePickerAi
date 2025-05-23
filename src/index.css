@@ -1,33 +1,90 @@
 @import "tailwindcss";
 
 :root {
-  --backround: #2a3347;
-  --ui-element-colors: #475a86;
-  --text-color: #adadad;
-  /* if theres any shading for 3d effects just use black */
+  /* Steam's official color palette */
+  --background: #1b2838;
+  /* Steam's dark blue background */
+  --background-light: #2a475e;
+  /* Lighter variant for cards/sections */
+  --ui-element-colors: #66c0f4;
+  /* Steam's signature blue */
+  --ui-element-hover: #4c9cd6;
+  /* Hover state for blue elements */
+  --text-color: #c7d5e0;
+  /* Steam's light blue-gray text */
+  --text-secondary: #8f98a0;
+  /* Secondary text color */
+  --accent-green: #90ba3c;
+  /* Steam's green for positive actions */
+  --accent-orange: #ff6b35;
+  /* Steam's orange for highlights */
+  --border-color: #3c4043;
+  /* Subtle borders */
+  --input-bg: #316282;
+  /* Input field background */
+  --button-gradient-start: #75b022;
+  /* Green gradient start */
+  --button-gradient-end: #588a1b;
+  /* Green gradient end */
 }
 
 body {
   font-family: 'Outfit', sans-serif;
-  background-color: var(--backround);
-  color: var(--ui-element-colors);
+  background: linear-gradient(135deg, var(--background) 0%, #0f1419 100%);
+  color: var(--text-color);
   margin: 0;
   padding: 20px;
-
+  min-height: 100vh;
 }
 
 header>h1 {
   font-size: 5em;
-
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
 }
 
 input {
-  background-color: white;
-  border-radius: 5%;
+  background-color: var(--input-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 3px;
+  color: var(--text-color);
+  transition: all 0.2s ease;
+}
+
+input:focus {
+  background-color: var(--background-light);
+  border-color: var(--ui-element-colors);
+  box-shadow: 0 0 8px rgba(102, 192, 244, 0.3);
+}
+
+input::placeholder {
+  color: var(--text-secondary);
 }
 
 button {
-  background-color: var(--ui-element-colors);
-  color: var(--text-color);
+  background: linear-gradient(90deg, var(--button-gradient-start) 5%, var(--button-gradient-end) 95%);
+  color: white;
   border: none;
+  border-radius: 2px;
+  transition: all 0.2s ease;
+  text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.3);
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+button:hover {
+  background: linear-gradient(90deg, #83c929 5%, #77b900 95%);
+  transform: translateY(-1px);
+  box-shadow: 2px 3px 8px rgba(0, 0, 0, 0.3);
+}
+
+button:active {
+  transform: translateY(0px);
+  box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+/* Additional Steam-like styling */
+.steam-card {
+  background: linear-gradient(135deg, var(--background-light) 0%, var(--background) 100%);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
 }
