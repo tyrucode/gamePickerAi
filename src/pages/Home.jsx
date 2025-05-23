@@ -5,7 +5,7 @@ function Home() {
     const navigate = useNavigate();
     const [steamUrl, setSteamUrl] = useState("")
 
-    const onSubmit = () => {
+    const onSubmit = (e) => {
         e.preventDefault()
         if (steamUrl.trim()) {
             // Encode the URL to make it safe for URL parameters
