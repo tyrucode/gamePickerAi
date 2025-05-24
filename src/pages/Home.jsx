@@ -42,8 +42,11 @@ function Home() {
 
             {/* Optional: Add some Steam-like decorative elements */}
             <div className="mt-8 text-center">
-                <p className="text-[var(--text-secondary)] text-sm">
+                <p className="text-[var(--text-secondary)] text-xsm mb-4">
                     Discover your next favorite game from your Steam library
+                </p>
+                <p className="text-[var(--text-secondary)] text-xsm">
+                    If you would like to use this app, please make Steam profile public
                 </p>
             </div>
         </div>

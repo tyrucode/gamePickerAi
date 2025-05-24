@@ -18,7 +18,7 @@ function RootLayout() {
                 <Outlet />
             </main>
             <footer className="text-center text-[var(--text-secondary)] text-sm py-8 border-t border-[var(--border-color)] mt-16">
-                <p>Not affiliated with Valve Corporation or Steam</p>
+                <p>Not affiliated with Valve Corporation or Steam | <a class="underline" href="https://github.com/tyrucode" target="_blank" >GitHub</a> <a class="underline" href="https://www.linkedin.com/in/tyler-ruiz-84a287305/" target="_blank">LinkedIn</a></p>
             </footer>
         </div>
     )
