@@ -16,46 +16,49 @@ function UserPage() {
                 setLoading(true);
                 setError(null);
 
-                console.log('Fetching data for Steam URL:', steamUrl);
+                console.log('fetching data for your steam url:', steamUrl);
 
-                // Fetch user profile
+                // fetch the users profile
                 const userResponse = await axios.get(
-                    `http://localhost:5000/api/steam/user/${encodeURIComponent(steamUrl)}`
+                    `http://localhost:5173/api/steam/user/${encodeURIComponent(steamUrl)}`
                 );
 
-                console.log('User response:', userResponse.data);
+                console.log('user response:', userResponse.data);
+                //setting the user to what we get from our api
                 const user = userResponse.data;
                 setUserData(user);
 
-                // Fetch user's games
-                console.log('Fetching games for Steam ID:', user.steamId);
+                // fetching the users games
+                console.log('fetching games from steam id:', user.steamId);
                 const gamesResponse = await axios.get(
-                    `http://localhost:5000/api/steam/games/${user.steamId}`
+                    `http://localhost:5173/api/steam/games/${user.steamId}`
                 );
-                console.log('Games response:', gamesResponse.data);
+                console.log('games response:', gamesResponse.data);
+                //setting the games as what we get from our api (or blank)
                 setGames(gamesResponse.data.games || []);
 
-                // Fetch game recommendations
+                // fetching 5 game reccomendations from our api
                 const recResponse = await axios.get(
-                    `http://localhost:5000/api/steam/recommendations/${user.steamId}?limit=5`
+                    `http://localhost:5173/api/steam/recommendations/${user.steamId}?limit=5`
                 );
-                console.log('Recommendations response:', recResponse.data);
+                console.log('reccommendations response:', recResponse.data);
+                //setting our reccomendations we get from api as what we get (or blank)
                 setRecommendations(recResponse.data.recommendations || []);
-
+                //error handling
             } catch (err) {
-                console.error('Error fetching data:', err);
-                console.error('Error response:', err.response?.data);
-                setError(err.response?.data?.error || 'Failed to fetch Steam data');
+                console.error('error fetching data:', err);
+                setError(err.response.data.error || 'failed to fetch Steam data');
+                //if everything works stop loading
             } finally {
                 setLoading(false);
             }
         };
-
+        //use that url and actually fetch the data with the function we just made above
         if (steamUrl) {
             fetchUserData();
         }
     }, [steamUrl]);
-
+    //simple loading screen
     if (loading) {
         return (
             <div className="flex justify-center items-center min-h-[50vh]">
@@ -63,7 +66,7 @@ function UserPage() {
             </div>
         );
     }
-
+    //return the error if there is a error
     if (error) {
         return (
             <div className="flex justify-center items-center min-h-[50vh]">
@@ -83,7 +86,7 @@ function UserPage() {
 
     return (
         <div className="max-w-6xl mx-auto space-y-8">
-            {/* User Profile Section */}
+            {/* user profile from api request */}
             {userData && (
                 <div className="steam-card p-6">
                     <div className="flex items-center space-x-6">
@@ -104,7 +107,7 @@ function UserPage() {
                 </div>
             )}
 
-            {/* Game Recommendations */}
+            {/* game reccs from the api req */}
             {recommendations && recommendations.length > 0 && (
                 <div className="steam-card p-6">
                     <h3 className="text-xl font-semibold text-[var(--text-color)] mb-4">
@@ -130,7 +133,7 @@ function UserPage() {
                 </div>
             )}
 
-            {/* Top Played Games */}
+            {/* list of the top games from the api res */}
             {games && games.length > 0 && (
                 <div className="steam-card p-6">
                     <h3 className="text-xl font-semibold text-[var(--text-color)] mb-4">

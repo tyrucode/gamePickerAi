@@ -15,14 +15,14 @@ app.use((cors({
 })));
 app.use(express.json());
 
-//routes
+//creating all of our routes
 app.use('/api/steam', steamRoutes);
 
 //health endpoint
 app.get('/api/health', (req, res) => {
     res.json({ message: 'server is running' })
 });
-
+//turning on server
 app.listen(port, () => {
     console.log(`server running on port ${port}`); ''
 });

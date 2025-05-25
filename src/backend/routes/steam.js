@@ -43,7 +43,9 @@ router.get('/user/:steamUrl(*)', async (req, res) => {
             //using api, to get the id of the custom url
             const resolveResponse = await axios.get(
                 `${BASE_URL}/ISteamUser/ResolveVanityURL/v0001/`, {
-                params: {
+                headers: {
+                    'Accept': 'application/json'
+                }, params: {
                     key: STEAM_API_KEY,
                     vanityurl: steamId
                 }
@@ -64,7 +66,9 @@ router.get('/user/:steamUrl(*)', async (req, res) => {
         console.log('fetching the user summary:', steamId);
         const userResponse = await axios.get(
             `${BASE_URL}/ISteamUser/GetPlayerSummaries/v0002/`, {
-            params: {
+            headers: {
+                'Accept': 'application/json'
+            }, params: {
                 key: STEAM_API_KEY,
                 steamids: steamId
             }
@@ -118,7 +122,9 @@ router.get('/games/:steamId', async (req, res) => {
 
         const gamesResponse = await axios.get(
             `${BASE_URL}/IPlayerService/GetOwnedGames/v0001/`, {
-            params: {
+            headers: {
+                'Accept': 'application/json'
+            }, params: {
                 key: STEAM_API_KEY,
                 steamid: steamId,
                 include_appinfo: true,
@@ -166,7 +172,9 @@ router.get('/recommendations/:steamId', async (req, res) => {
         //our game request
         const gamesResponse = await axios.get(
             `${BASE_URL}/IPlayerService/GetOwnedGames/v0001/`, {
-            params: {
+            headers: {
+                'Accept': 'application/json'
+            }, params: {
                 key: STEAM_API_KEY,
                 steamid: steamId,
                 include_appinfo: true,

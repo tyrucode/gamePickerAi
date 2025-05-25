@@ -4,11 +4,12 @@ import { useState } from "react";
 function Home() {
     const navigate = useNavigate();
     const [steamUrl, setSteamUrl] = useState("")
-
+    //when the url button is submitted
     const onSubmit = (e) => {
+        //dont refresh
         e.preventDefault()
+        //trim and encode the url so it is safer, then navigate to the userPage with encoded url as parameters
         if (steamUrl.trim()) {
-            // Encode the URL to make it safe for URL parameters
             const encodedUrl = encodeURIComponent(steamUrl)
             navigate(`/userPage/${encodedUrl}`)
         }
@@ -40,13 +41,12 @@ function Home() {
                 </form>
             </div>
 
-            {/* Optional: Add some Steam-like decorative elements */}
             <div className="mt-8 text-center">
                 <p className="text-[var(--text-secondary)] text-xsm mb-4">
                     Discover your next favorite game from your Steam library
                 </p>
                 <p className="text-[var(--text-secondary)] text-xsm">
-                    If you would like to use this app, please make Steam profile public
+                    If you would like to use this app, please make your Steam profile public
                 </p>
             </div>
         </div>
