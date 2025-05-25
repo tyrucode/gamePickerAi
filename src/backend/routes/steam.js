@@ -206,5 +206,4 @@ router.get('/recommendations/*', async (req, res) => {
         res.status(500).json({ error: 'failed to fetch game recommendations' });
     }
 });
-
 export default router;

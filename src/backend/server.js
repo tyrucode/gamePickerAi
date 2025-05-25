@@ -1,4 +1,5 @@
 import express from 'express';
+const app = express();
 import cors from 'cors';
 import dotenv from 'dotenv';
 import steamRoutes from './routes/steam';
@@ -6,7 +7,6 @@ import steamRoutes from './routes/steam';
 //env variables
 dotenv.config();
 
-const app = express();
 const PORT = 3001;
 
 app.use(cors({
