@@ -1,5 +1,6 @@
-const express = require('express');
-const axios = require('axios');
+import express from 'express';
+import axios from 'axios';
+
 const router = express.Router();
 
 const STEAM_API_KEY = process.env.STEAM_API_KEY;
@@ -23,10 +24,10 @@ function extractSteamId(steamUrl) {
 }
 
 // route to get user profile info
-router.get('/user/:steamUrl(*)', async (req, res) => {
+router.get('/user/*', async (req, res) => {
     try {
         //get decoded url parameter
-        const steamUrl = decodeURIComponent(req.params.steamUrl);
+        const steamUrl = decodeURIComponent(req.params[0]);
         console.log('received steam url:', steamUrl);
         //extreact the id from the url with funciton from earlier
         let steamId = extractSteamId(steamUrl);
@@ -114,7 +115,7 @@ router.get('/user/:steamUrl(*)', async (req, res) => {
 });
 
 // route to get the users owned games
-router.get('/games/:steamId', async (req, res) => {
+router.get('/games/*', async (req, res) => {
     try {
         //get steam id from parameters
         const { steamId } = req.params;
@@ -164,7 +165,7 @@ router.get('/games/:steamId', async (req, res) => {
 });
 
 // route to get 5 random / barely played games
-router.get('/recommendations/:steamId', async (req, res) => {
+router.get('/recommendations/*', async (req, res) => {
     try {
         //getting data from the params
         const { steamId } = req.params;
@@ -206,4 +207,4 @@ router.get('/recommendations/:steamId', async (req, res) => {
     }
 });
 
-module.exports = router;
+export default router;

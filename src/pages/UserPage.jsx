@@ -20,7 +20,7 @@ function UserPage() {
 
                 // fetch the users profile
                 const userResponse = await axios.get(
-                    `http://localhost:5173/api/steam/user/${encodeURIComponent(steamUrl)}`
+                    `http://localhost:3001/api/steam/user/${encodeURIComponent(steamUrl)}`
                 );
 
                 console.log('user response:', userResponse.data);
@@ -31,7 +31,7 @@ function UserPage() {
                 // fetching the users games
                 console.log('fetching games from steam id:', user.steamId);
                 const gamesResponse = await axios.get(
-                    `http://localhost:5173/api/steam/games/${user.steamId}`
+                    `http://localhost:3001/api/steam/games/${user.steamId}`
                 );
                 console.log('games response:', gamesResponse.data);
                 //setting the games as what we get from our api (or blank)
@@ -39,7 +39,7 @@ function UserPage() {
 
                 // fetching 5 game reccomendations from our api
                 const recResponse = await axios.get(
-                    `http://localhost:5173/api/steam/recommendations/${user.steamId}?limit=5`
+                    `http://localhost:3001/api/steam/recommendations/${user.steamId}?limit=5`
                 );
                 console.log('reccommendations response:', recResponse.data);
                 //setting our reccomendations we get from api as what we get (or blank)
