@@ -28,6 +28,9 @@ router.get('/user/:encodedUrl', async (req, res) => {
     try {
         //get decoded url parameter
         const steamUrl = decodeURIComponent(req.params.encodedUrl);
+
+
+        //  /   const steamUrl = req.params.encodedUrl
         console.log('received steam url:', steamUrl);
         //extract the id from the url with function from earlier
         let steamId = extractSteamId(steamUrl);

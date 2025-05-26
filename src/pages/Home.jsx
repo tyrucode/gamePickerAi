@@ -8,11 +8,8 @@ function Home() {
     const onSubmit = (e) => {
         //dont refresh
         e.preventDefault()
-        //trim and encode the url so it is safer, then navigate to the userPage with encoded url as parameters
-        if (steamUrl.trim()) {
-            const encodedUrl = encodeURIComponent(steamUrl)
-            navigate(`/userPage/${encodedUrl}`)
-        }
+
+        navigate(`/userPage/${encodeURIComponent(steamUrl)}`)
     }
 
     return (

@@ -11,7 +11,7 @@ const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<RootLayout />}>
       <Route index element={<Home />} />
-      <Route path="userPage/:steamUrl" element={<UserPage />} />
+      <Route path="userPage/:steamId" element={<UserPage />} />
     </Route>
   )
 )
