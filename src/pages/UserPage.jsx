@@ -20,7 +20,7 @@ function UserPage() {
 
                 // fetch the users profile
                 const userResponse = await axios.get(
-                    `http://localhost:3001/api/steam/user/${encodeURIComponent(steamUrl)}`
+                    `http://localhost:3001/api/steam/user/${steamUrl}`
                 );
 
                 console.log('user response:', userResponse.data);
@@ -47,7 +47,9 @@ function UserPage() {
                 //error handling
             } catch (err) {
                 console.error('error fetching data:', err);
-                setError(err.response.data.error || 'failed to fetch Steam data');
+                // Fix: Check if err.response exists before accessing err.response.data
+                const errorMessage = err.response?.data?.error || err.message || 'failed to fetch Steam data';
+                setError(errorMessage);
                 //if everything works stop loading
             } finally {
                 setLoading(false);
@@ -58,6 +60,7 @@ function UserPage() {
             fetchUserData();
         }
     }, [steamUrl]);
+
     //simple loading screen
     if (loading) {
         return (

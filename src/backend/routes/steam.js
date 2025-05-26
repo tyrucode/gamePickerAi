@@ -24,12 +24,12 @@ function extractSteamId(steamUrl) {
 }
 
 // route to get user profile info
-router.get('/user/*', async (req, res) => {
+router.get('/user/:encodedUrl', async (req, res) => {
     try {
         //get decoded url parameter
-        const steamUrl = decodeURIComponent(req.params[0]);
+        const steamUrl = decodeURIComponent(req.params.encodedUrl);
         console.log('received steam url:', steamUrl);
-        //extreact the id from the url with funciton from earlier
+        //extract the id from the url with function from earlier
         let steamId = extractSteamId(steamUrl);
         console.log('extracted steam id:', steamId);
         //if no steam id then return error
@@ -38,7 +38,7 @@ router.get('/user/*', async (req, res) => {
             return res.status(400).json({ error: 'invalid steam url format' });
         }
 
-        // if its a custom url we use api to turn it back into a uisual steam url
+        // if its a custom url we use api to turn it back into a usual steam url
         if (isNaN(steamId)) {
             console.log('fixing custom url:', steamId);
             //using api, to get the id of the custom url
@@ -54,7 +54,7 @@ router.get('/user/*', async (req, res) => {
             );
 
             console.log('resolve response:', resolveResponse.data);
-            //if the resolve isnt a  success, then 404 + error
+            //if the resolve isnt a success, then 404 + error
             if (resolveResponse.data.response.success !== 1) {
                 return res.status(404).json({ error: 'that steam profile isnt found' });
             }
@@ -83,7 +83,6 @@ router.get('/user/*', async (req, res) => {
         if (!userData) {
             return res.status(404).json({ error: 'steam profile not found' });
         }
-
 
         // check if profile is public
         if (userData.communityvisibilitystate !== 3) {
@@ -115,7 +114,7 @@ router.get('/user/*', async (req, res) => {
 });
 
 // route to get the users owned games
-router.get('/games/*', async (req, res) => {
+router.get('/games/:steamId', async (req, res) => {
     try {
         //get steam id from parameters
         const { steamId } = req.params;
@@ -165,7 +164,7 @@ router.get('/games/*', async (req, res) => {
 });
 
 // route to get 5 random / barely played games
-router.get('/recommendations/*', async (req, res) => {
+router.get('/recommendations/:steamId', async (req, res) => {
     try {
         //getting data from the params
         const { steamId } = req.params;
@@ -202,8 +201,9 @@ router.get('/recommendations/*', async (req, res) => {
         res.json({ recommendations });
         //error handling
     } catch (error) {
-        console.error('error fetching reccomendations:', error.message);
+        console.error('error fetching recommendations:', error.message);
         res.status(500).json({ error: 'failed to fetch game recommendations' });
     }
 });
+
 export default router;

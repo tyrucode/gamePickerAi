@@ -2,7 +2,7 @@ import express from 'express';
 const app = express();
 import cors from 'cors';
 import dotenv from 'dotenv';
-import steamRoutes from './routes/steam';
+import steamRoutes from './routes/steam.js';
 
 //env variables
 dotenv.config();
