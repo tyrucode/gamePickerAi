@@ -75,24 +75,42 @@ function UserPage() {
     return (
         <div key={steamUrl} className="max-w-6xl mx-auto space-y-8">
             {userData && (
-                <div className="steam-card p-6">
-                    <div className="flex items-center space-x-6">
-                        <img
-                            src={userData.avatarUrl}
-                            alt={userData.personaName}
-                            className="w-20 h-20 rounded"
-                        />
-                        <div>
-                            <h2 className="text-2xl font-bold text-[var(--text-color)]">
-                                {userData.personaName}
-                            </h2>
-                            <p className="text-[var(--text-secondary)]">
-                                Total Games: {games?.length || 0}
-                            </p>
+                <>
+                    <div className="steam-card p-6">
+                        <div className="flex items-center space-x-6">
+                            <img
+                                src={userData.avatarUrl}
+                                alt={userData.personaName}
+                                className="w-20 h-20 rounded"
+                            />
+                            <div>
+                                <h2 className="text-2xl font-bold text-[var(--text-color)]">
+                                    {userData.personaName}
+                                </h2>
+                                <p className="text-[var(--text-secondary)]">
+                                    Total Games: {games?.length || 0}
+                                </p>
+                            </div>
                         </div>
                     </div>
-                </div>
+
+                    {/* throw gpt talking right here */}
+                    <div className="steam-card p-6">
+                        <div className="items-center space-x-6 flex justify-evenly" >
+                            <h1 className="text-2xl font-bold text-[var(--text-color)]">Ask ChatGPT!</h1>
+                            <div>
+
+                            </div>
+                            <button className="w-half px-8 py-3 text-lg font-medium rounded  tracking-wide flex-grow " >Based on my past games, what should I play?</button>
+                        </div>
+                    </div>
+                </>
             )}
+
+
+
+
+
 
             {recommendations && recommendations.length > 0 && (
                 <div className="steam-card p-6">
