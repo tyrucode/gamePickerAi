@@ -1,6 +1,5 @@
-import { useParams } from "react-router"
-import { useState, useEffect } from "react"
-import axios from "axios"
+import { useParams } from "react-router";
+import { useState, useEffect } from "react";
 
 function UserPage() {
     const { steamUrl } = useParams();
@@ -18,47 +17,37 @@ function UserPage() {
 
                 console.log('fetching data for your steam url:', steamUrl);
 
-                // fetch the users profile - steamUrl is already encoded from the route params
-                const userResponse = await axios.get(
-                    `http://localhost:5000/api/steam/user/${steamUrl}`
-                );
-
-                console.log('user response:', userResponse.data);
-                //setting the user to what we get from our api
-                const user = userResponse.data;
+                const userRes = await fetch(`http://localhost:5000/api/steam/user/${encodeURIComponent(steamUrl)}`);
+                if (!userRes.ok) throw new Error('Failed to fetch user');
+                const user = await userRes.json();
+                console.log('user response:', user);
                 setUserData(user);
 
-                // fetching the users games
-                console.log('fetching games from steam id:', user.steamId);
-                const gamesResponse = await axios.get(
-                    `http://localhost:5000/api/steam/games/${user.steamId}`
-                );
-                console.log('games response:', gamesResponse.data);
-                //setting the games as what we get from our api (or blank)
-                setGames(gamesResponse.data.games || []);
+                const gamesRes = await fetch(`http://localhost:5000/api/steam/games/${user.steamId}`);
+                if (!gamesRes.ok) throw new Error('Failed to fetch games');
+                const gamesData = await gamesRes.json();
+                console.log('games response:', gamesData);
+                setGames(gamesData.games || []);
 
-                // fetching 5 game reccomendations from our api
-                const recResponse = await axios.get(
-                    `http://localhost:5000/api/steam/recommendations/${user.steamId}?limit=5`
-                );
-                console.log('reccommendations response:', recResponse.data);
-                //setting our reccomendations we get from api as what we get (or blank)
-                setRecommendations(recResponse.data.recommendations || []);
-                //error handling
+                const recRes = await fetch(`http://localhost:5000/api/steam/recommendations/${user.steamId}?limit=5`);
+                if (!recRes.ok) throw new Error('Failed to fetch recommendations');
+                const recData = await recRes.json();
+                console.log('recommendations response:', recData);
+                setRecommendations(recData.recommendations || []);
+
             } catch (err) {
                 console.error('error fetching data:', err);
-                setError(err.response?.data?.error || 'failed to fetch Steam data');
-                //if everything works stop loading
+                setError(err.message || 'Failed to fetch Steam data');
             } finally {
                 setLoading(false);
             }
         };
-        //use that url and actually fetch the data with the function we just made above
+
         if (steamUrl) {
             fetchUserData();
         }
     }, [steamUrl]);
-    //simple loading screen
+
     if (loading) {
         return (
             <div className="flex justify-center items-center min-h-[50vh]">
@@ -66,27 +55,26 @@ function UserPage() {
             </div>
         );
     }
-    //return the error if there is a error
-    if (error) {
-        return (
-            <div className="flex justify-center items-center min-h-[50vh]">
-                <div className="steam-card p-8 max-w-md text-center">
-                    <h2 className="text-xl font-semibold text-[var(--accent-orange)] mb-4">Error</h2>
-                    <p className="text-[var(--text-color)]">{error}</p>
-                    <a
-                        href="/"
-                        className="inline-block mt-4 px-6 py-2 bg-[var(--ui-element-colors)] text-white rounded hover:bg-[var(--ui-element-hover)]"
-                    >
-                        Try Again
-                    </a>
-                </div>
-            </div>
-        );
-    }
+
+    // if (error) {
+    //     return (
+    //         <div className="flex justify-center items-center min-h-[50vh]">
+    //             <div className="steam-card p-8 max-w-md text-center">
+    //                 <h2 className="text-xl font-semibold text-[var(--accent-orange)] mb-4">Error</h2>
+    //                 <p className="text-[var(--text-color)]">{error}</p>
+    //                 <a
+    //                     href="/"
+    //                     className="inline-block mt-4 px-6 py-2 bg-[var(--ui-element-colors)] text-white rounded hover:bg-[var(--ui-element-hover)]"
+    //                 >
+    //                     Try Again
+    //                 </a>
+    //             </div>
+    //         </div>
+    //     );
+    // }
 
     return (
         <div className="max-w-6xl mx-auto space-y-8">
-            {/* user profile from api request */}
             {userData && (
                 <div className="steam-card p-6">
                     <div className="flex items-center space-x-6">
@@ -107,7 +95,6 @@ function UserPage() {
                 </div>
             )}
 
-            {/* game reccs from the api req */}
             {recommendations && recommendations.length > 0 && (
                 <div className="steam-card p-6">
                     <h3 className="text-xl font-semibold text-[var(--text-color)] mb-4">
@@ -133,7 +120,6 @@ function UserPage() {
                 </div>
             )}
 
-            {/* list of the top games from the api res */}
             {games && games.length > 0 && (
                 <div className="steam-card p-6">
                     <h3 className="text-xl font-semibold text-[var(--text-color)] mb-4">
@@ -162,4 +148,4 @@ function UserPage() {
     );
 }
 
-export default UserPage
+export default UserPage;

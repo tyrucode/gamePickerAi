@@ -21,15 +21,7 @@ app.use(express.json());
 // api routes
 
 //creating all of our routes
-app.use('/api/steam', async (req, res, next) => {
-    try {
-        await steamRoutes(req, res, next);
-        console.log('Steam routes executed successfully');
-    } catch (error) {
-        console.error('Error in steam routes:', error);
-        res.status(500).json({ error: 'Internal Server Error' });
-    }
-});
+app.use('/api/steam', steamRoutes);
 
 //health endpoint
 app.get('/api/health', (req, res) => {
@@ -47,6 +39,3 @@ app.use((err, req, res, next) => {
     res.status(500).json({ error: 'Internal server error' });
 });
 
-app.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`);
-});

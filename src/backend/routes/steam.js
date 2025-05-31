@@ -1,6 +1,7 @@
 import express from 'express';
 import axios from 'axios';
 import dotenv from 'dotenv';
+
 dotenv.config(); //load env variables
 const router = express.Router(); //router instance
 
@@ -28,6 +29,7 @@ router.get('/user/:encodedUrl', async (req, res) => {
     try {
         //get decoded url parameter
         const steamUrl = decodeURIComponent(req.params.encodedUrl);
+
         //  /   const steamUrl = req.params.encodedUrl
         console.log('received steam url:', steamUrl);
         //extract the id from the url with function from earlier
@@ -93,12 +95,12 @@ router.get('/user/:encodedUrl', async (req, res) => {
         }
 
         const responseData = {
-            steamId: userData.steamid,
-            personaName: userData.personaname,
-            avatarUrl: userData.avatarfull,
-            profileUrl: userData.profileurl,
-            countryCode: userData.loccountrycode,
-            timeCreated: userData.timecreated
+            steamId: userData.steamId,
+            personaName: userData.personaName,
+            avatarUrl: userData.avatarUrl,
+            profileUrl: userData.profileUrl,
+            countryCode: userData.countryCode,
+            timeCreated: userData.timeCreated
         };
 
         console.log('sending res:', responseData);
