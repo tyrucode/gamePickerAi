@@ -7,13 +7,13 @@ function UserPage() {
     const [games, setGames] = useState([]);
     const [recommendations, setRecommendations] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
+
 
     useEffect(() => {
         const fetchUserData = async () => {
             try {
                 setLoading(true);
-                setError(null);
+
 
                 console.log('fetching data for your steam url:', steamUrl);
 
@@ -37,7 +37,6 @@ function UserPage() {
 
             } catch (err) {
                 console.error('error fetching data:', err);
-                setError(err.message || 'Failed to fetch Steam data');
             } finally {
                 setLoading(false);
             }
