@@ -74,7 +74,7 @@ function UserPage() {
     // }
 
     return (
-        <div className="max-w-6xl mx-auto space-y-8">
+        <div key={steamUrl} className="max-w-6xl mx-auto space-y-8">
             {userData && (
                 <div className="steam-card p-6">
                     <div className="flex items-center space-x-6">

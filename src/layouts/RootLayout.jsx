@@ -1,13 +1,14 @@
 // imports
 import { Outlet } from "react-router"
+import { NavLink } from "react-router"
 
 function RootLayout() {
     return (
         <div className="min-h-screen">
             <header className="bg-gradient-to-r from-[var(--background-light)] to-[var(--background)] text-[var(--text-color)] shadow-lg border-b border-[var(--border-color)]">
                 <div className="max-w-7xl mx-auto px-4 py-6">
-                    <h1 className="text-4xl md:text-5xl font-bold tracking-wide text-center bg-white bg-clip-text text-transparent">
-                        Steam Game Finder
+                    <h1 className=" hover:scale-105 transition-all duration-200 ease-in-out text-4xl md:text-5xl font-bold tracking-wide text-center bg-white bg-clip-text text-transparent">
+                        <NavLink to="/" >Steam Game Finder</NavLink>
                     </h1>
                     <p className="text-center text-[var(--text-secondary)] mt-2 text-sm uppercase tracking-widest">
                         Powered by Steam API

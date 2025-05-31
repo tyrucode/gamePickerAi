@@ -94,13 +94,14 @@ router.get('/user/:encodedUrl', async (req, res) => {
             });
         }
 
+        // Fixed: Using correct property names from Steam API
         const responseData = {
-            steamId: userData.steamId,
-            personaName: userData.personaName,
-            avatarUrl: userData.avatarUrl,
-            profileUrl: userData.profileUrl,
-            countryCode: userData.countryCode,
-            timeCreated: userData.timeCreated
+            steamId: userData.steamid, // Changed from steamId to steamid
+            personaName: userData.personaname, // Changed from personaName to personaname
+            avatarUrl: userData.avatarfull || userData.avatarmedium || userData.avatar, // Changed from avatarUrl to avatarfull
+            profileUrl: userData.profileurl, // Changed from profileUrl to profileurl
+            countryCode: userData.loccountrycode, // Changed from countryCode to loccountrycode
+            timeCreated: userData.timecreated // Changed from timeCreated to timecreated
         };
 
         console.log('sending res:', responseData);
