@@ -1,22 +1,35 @@
 import express from 'express';
-const app = express();
 import cors from 'cors';
 import dotenv from 'dotenv';
 import steamRoutes from './routes/steam.js';
 
 //env variables
 dotenv.config();
+// initializing express app
+const app = express();
+const PORT = 5000;
 
-const PORT = 3001;
+const allowedOrigins = 'http://localhost:5173';
 
 app.use(cors({
-    origin: 'http://localhost:5173',
+    origin: allowedOrigins,
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true
 }));
+
 app.use(express.json());
+// api routes
 
 //creating all of our routes
-app.use('/api/steam', steamRoutes);
+app.use('/api/steam', async (req, res, next) => {
+    try {
+        await steamRoutes(req, res, next);
+        console.log('Steam routes executed successfully');
+    } catch (error) {
+        console.error('Error in steam routes:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
 
 //health endpoint
 app.get('/api/health', (req, res) => {
@@ -26,4 +39,14 @@ app.get('/api/health', (req, res) => {
 //turning on server
 app.listen(PORT, () => {
     console.log(`server running on port ${PORT}`);
+});
+
+// Error handling middleware
+app.use((err, req, res, next) => {
+    console.error('Server error:', err);
+    res.status(500).json({ error: 'Internal server error' });
+});
+
+app.listen(PORT, () => {
+    console.log(`Server is running on http://localhost:${PORT}`);
 });

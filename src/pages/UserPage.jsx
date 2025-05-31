@@ -18,9 +18,9 @@ function UserPage() {
 
                 console.log('fetching data for your steam url:', steamUrl);
 
-                // fetch the users profile
+                // fetch the users profile - steamUrl is already encoded from the route params
                 const userResponse = await axios.get(
-                    `http://localhost:3001/api/steam/user/${encodeURIComponent(steamUrl)}`
+                    `http://localhost:5000/api/steam/user/${steamUrl}`
                 );
 
                 console.log('user response:', userResponse.data);
@@ -31,7 +31,7 @@ function UserPage() {
                 // fetching the users games
                 console.log('fetching games from steam id:', user.steamId);
                 const gamesResponse = await axios.get(
-                    `http://localhost:3001/api/steam/games/${user.steamId}`
+                    `http://localhost:5000/api/steam/games/${user.steamId}`
                 );
                 console.log('games response:', gamesResponse.data);
                 //setting the games as what we get from our api (or blank)
@@ -39,7 +39,7 @@ function UserPage() {
 
                 // fetching 5 game reccomendations from our api
                 const recResponse = await axios.get(
-                    `http://localhost:3001/api/steam/recommendations/${user.steamId}?limit=5`
+                    `http://localhost:5000/api/steam/recommendations/${user.steamId}?limit=5`
                 );
                 console.log('reccommendations response:', recResponse.data);
                 //setting our reccomendations we get from api as what we get (or blank)
@@ -47,7 +47,7 @@ function UserPage() {
                 //error handling
             } catch (err) {
                 console.error('error fetching data:', err);
-                setError(err.response.data.error || 'failed to fetch Steam data');
+                setError(err.response?.data?.error || 'failed to fetch Steam data');
                 //if everything works stop loading
             } finally {
                 setLoading(false);

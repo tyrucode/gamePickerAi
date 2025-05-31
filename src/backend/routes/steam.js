@@ -1,11 +1,11 @@
 import express from 'express';
 import axios from 'axios';
-
-const router = express.Router();
+import dotenv from 'dotenv';
+dotenv.config(); //load env variables
+const router = express.Router(); //router instance
 
 const STEAM_API_KEY = process.env.STEAM_API_KEY;
 const BASE_URL = 'https://api.steampowered.com';
-
 // Helper function to extract Steam ID from profile URL
 function extractSteamId(steamUrl) {
     // Handle different steam URL formats
@@ -28,8 +28,6 @@ router.get('/user/:encodedUrl', async (req, res) => {
     try {
         //get decoded url parameter
         const steamUrl = decodeURIComponent(req.params.encodedUrl);
-
-
         //  /   const steamUrl = req.params.encodedUrl
         console.log('received steam url:', steamUrl);
         //extract the id from the url with function from earlier
