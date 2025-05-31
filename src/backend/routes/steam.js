@@ -6,6 +6,7 @@ dotenv.config(); //load env variables
 const router = express.Router(); //router instance
 
 const STEAM_API_KEY = process.env.STEAM_API_KEY;
+
 const BASE_URL = 'https://api.steampowered.com';
 // Helper function to extract Steam ID from profile URL
 function extractSteamId(steamUrl) {
@@ -209,5 +210,53 @@ router.get('/recommendations/:steamId', async (req, res) => {
         res.status(500).json({ error: 'failed to fetch game recommendations' });
     }
 });
+
+import OpenAI from "openai";
+const openai = new OpenAI({
+    apiKey: process.env.OPENAI_API_KEY,
+});
+//GPT
+router.get('/askingForRecs', async (req, res) => {
+    try {
+        const res = await openai.chat.completions.create({
+            model: "gpt-4o-mini",  // or "gpt-4" or your preferred model
+            messages: [
+                { role: "user", content: "What game do you recommend I play?" }
+            ],
+            functions: [
+                {
+                    name: "game_recommendations",
+                    description: "Based on the user's played games, recommend 5 games they might like, including the game name and a link to the game on Steam",
+                    parameters: {
+                        type: "object",
+                        properties: {
+                            recommendations: {
+                                type: "array",
+                                items: {
+                                    type: "object",
+                                    properties: {
+                                        game_name: { type: "string", description: "Name of the game" },
+                                        steam_link: { type: "string", description: "Link to the game on Steam" }
+                                    },
+                                    required: ["game_name", "steam_link"]
+                                }
+                            }
+                        },
+                        required: ["recommendations"]
+                    }
+                }
+            ],
+            function_call: "auto"
+        });
+
+        // The model might call the function with its response
+        const message = response.choices[0].message;
+
+        res.json({ recommendations: message.recommendations });
+    } catch (error) {
+        console.error('gpt error fetching recommendations:', error);
+        res.status(500).json({ error: 'Failed to fetch game recommendations with GPT' });
+    }
+})
 
 export default router;

@@ -7,7 +7,9 @@ function UserPage() {
     const [games, setGames] = useState([]);
     const [recommendations, setRecommendations] = useState([]);
     const [loading, setLoading] = useState(true);
-
+    const [gptAnswer, setGptAnswer] = useState("");
+    const [loadingGPT, setLoadingGPT] = useState(false);
+    const [errorGPT, setErrorGPT] = useState(null);
 
     useEffect(() => {
         const fetchUserData = async () => {
@@ -46,6 +48,28 @@ function UserPage() {
             fetchUserData();
         }
     }, [steamUrl]);
+
+    async function handleGetReccomendations() {
+        setLoadingGPT(true);
+        setErrorGPT(null);
+        setGptAnswer("");
+
+        try {
+
+            const response = await fetch('http://localhost:5000/api/steam/askingForRecs');
+            const data = await response.json();
+            console.log('GPT response:', data);
+
+
+
+
+        } catch (error) {
+            console.error('error fetching reccomendation:', error);
+            setErrorGPT('Failed to fetch recommendations from OpenAi, please try again later or refresh.');
+        }
+    }
+
+
 
     if (loading) {
         return (
@@ -96,12 +120,19 @@ function UserPage() {
 
                     {/* throw gpt talking right here */}
                     <div className="steam-card p-6">
-                        <div className="items-center space-x-6 flex justify-evenly" >
-                            <h1 className="text-2xl font-bold text-[var(--text-color)]">Ask ChatGPT!</h1>
-                            <div>
+                        <h1 className="text-2xl font-bold text-[var(--text-color)]">Ask ChatGPT!</h1>
+                        <button
+                            onClick={handleGetReccomendations}
+                            className="w-half px-8 py-3 text-lg font-medium rounded tracking-wide"
+                            disabled={loadingGPT}
+                        >
+                            {loadingGPT ? "Loading..." : "Based on my past games, what should I play?"}
+                        </button>
 
-                            </div>
-                            <button className="w-half px-8 py-3 text-lg font-medium rounded  tracking-wide flex-grow " >Based on my past games, what should I play?</button>
+                        <div className="mt-4">
+                            <h2 className="text-lg font-semibold">ANSWER:</h2>
+                            {errorGPT && <p className="text-red-500">{errorGPT}</p>}
+                            <pre className="whitespace-pre-wrap text-[var(--text-color)]">{gptAnswer}</pre>
                         </div>
                     </div>
                 </>
