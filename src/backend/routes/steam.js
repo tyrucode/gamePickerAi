@@ -235,25 +235,26 @@ router.get('/askingForRecs/:steamId', async (req, res) => {
         }
         );
         const gamesData = gamesResponse.data.response;
-        const userGames = gamesData.games
+        const userGames = gamesData.games;
 
         const openaiResponse = await openai.chat.completions.create({
             model: "gpt-4o-mini",
             messages: [
                 {
                     role: "user",
-                    content: `Heres my game data ${gamesData} and heres my owned games ${userGames}. Based on these games I've played, what 5 games would you recommend I try next? Please provide specific game recommendations with brief explanations of why I might like them.`
+                    content: `Heres my game data ${userGames}. Based on these games I've played, what 5 games would you recommend I try next? Please provide specific game recommendations with brief explanations of why I might like them.`
                 }
             ],
             max_tokens: 500,
             temperature: 1
         });
 
+
+
         const recommendation = openaiResponse.choices[0].message.content;
 
         res.json({
-            recommendation: recommendation,
-            userGames: topGames
+            recommendation: recommendation
         });
     } catch (error) {
         console.error('gpt error fetching recommendations:', error);
