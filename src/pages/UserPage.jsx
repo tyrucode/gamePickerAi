@@ -5,10 +5,8 @@ function UserPage() {
     const { steamUrl } = useParams();
     const [userData, setUserData] = useState(null);
     const [games, setGames] = useState([]);
-    const [recommendations, setRecommendations] = useState([]);
     const [loading, setLoading] = useState(true);
     const [gptAnswer, setGptAnswer] = useState("");
-    const [loadingGPT, setLoadingGPT] = useState(false);
     const [errorGPT, setErrorGPT] = useState(null);
 
     useEffect(() => {
@@ -31,11 +29,6 @@ function UserPage() {
                 console.log('games response:', gamesData);
                 setGames(gamesData.games || []);
 
-                const recRes = await fetch(`http://localhost:5000/api/steam/recommendations/${user.steamId}?limit=5`);
-                if (!recRes.ok) throw new Error('Failed to fetch recommendations');
-                const recData = await recRes.json();
-                console.log('recommendations response:', recData);
-                setRecommendations(recData.recommendations || []);
 
             } catch (err) {
                 console.error('error fetching data:', err);
@@ -49,27 +42,26 @@ function UserPage() {
         }
     }, [steamUrl]);
 
+
     async function handleGetReccomendations() {
-        setLoadingGPT(true);
+        setLoading(true);
         setErrorGPT(null);
         setGptAnswer("");
-
         try {
-
-            const response = await fetch('http://localhost:5000/api/steam/askingForRecs');
+            const response = await fetch(`http://localhost:5000/api/steam/askingForRecs/${userData.steamId}`);
+            if (!response.ok) {
+                throw new Error('Failed to fetch recommendations from OpenAI');
+            }
             const data = await response.json();
-            console.log('GPT response:', data);
-
-
-
+            setGptAnswer(data.recommendation);
 
         } catch (error) {
             console.error('error fetching reccomendation:', error);
             setErrorGPT('Failed to fetch recommendations from OpenAi, please try again later or refresh.');
+        } finally {
+            setLoading(false);
         }
     }
-
-
 
     if (loading) {
         return (
@@ -79,22 +71,6 @@ function UserPage() {
         );
     }
 
-    // if (error) {
-    //     return (
-    //         <div className="flex justify-center items-center min-h-[50vh]">
-    //             <div className="steam-card p-8 max-w-md text-center">
-    //                 <h2 className="text-xl font-semibold text-[var(--accent-orange)] mb-4">Error</h2>
-    //                 <p className="text-[var(--text-color)]">{error}</p>
-    //                 <a
-    //                     href="/"
-    //                     className="inline-block mt-4 px-6 py-2 bg-[var(--ui-element-colors)] text-white rounded hover:bg-[var(--ui-element-hover)]"
-    //                 >
-    //                     Try Again
-    //                 </a>
-    //             </div>
-    //         </div>
-    //     );
-    // }
 
     return (
         <div key={steamUrl} className="max-w-6xl mx-auto space-y-8">
@@ -124,9 +100,9 @@ function UserPage() {
                         <button
                             onClick={handleGetReccomendations}
                             className="w-half px-8 py-3 text-lg font-medium rounded tracking-wide"
-                            disabled={loadingGPT}
+                            disabled={loading}
                         >
-                            {loadingGPT ? "Loading..." : "Based on my past games, what should I play?"}
+                            {loading ? "Loading..." : "Based on my past games, what should I play?"}
                         </button>
 
                         <div className="mt-4">
@@ -136,36 +112,6 @@ function UserPage() {
                         </div>
                     </div>
                 </>
-            )}
-
-
-
-
-
-
-            {recommendations && recommendations.length > 0 && (
-                <div className="steam-card p-6">
-                    <h3 className="text-xl font-semibold text-[var(--text-color)] mb-4">
-                        Games You Should Play
-                    </h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                        {recommendations.map(game => (
-                            <div key={game.appid} className="bg-[var(--background)] p-4 rounded border border-[var(--border-color)]">
-                                <img
-                                    src={`https://media.steampowered.com/steamcommunity/public/images/apps/${game.appid}/${game.img_icon_url}.jpg`}
-                                    alt={game.name}
-                                    className="w-8 h-8 mb-2"
-                                />
-                                <h4 className="text-[var(--text-color)] font-medium text-sm">
-                                    {game.name}
-                                </h4>
-                                <p className="text-[var(--text-secondary)] text-xs">
-                                    Playtime: {Math.floor((game.playtime_forever || 0) / 60)}h {(game.playtime_forever || 0) % 60}m
-                                </p>
-                            </div>
-                        ))}
-                    </div>
-                </div>
             )}
 
             {games && games.length > 0 && (

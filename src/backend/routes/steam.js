@@ -7,6 +7,11 @@ const router = express.Router(); //router instance
 
 const STEAM_API_KEY = process.env.STEAM_API_KEY;
 
+import OpenAI from "openai";
+const openai = new OpenAI({
+    apiKey: process.env.OPENAI_API_KEY,
+});
+
 const BASE_URL = 'https://api.steampowered.com';
 // Helper function to extract Steam ID from profile URL
 function extractSteamId(steamUrl) {
@@ -211,48 +216,45 @@ router.get('/recommendations/:steamId', async (req, res) => {
     }
 });
 
-import OpenAI from "openai";
-const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY,
-});
+
 //GPT
-router.get('/askingForRecs', async (req, res) => {
+router.get('/askingForRecs/:steamId', async (req, res) => {
     try {
-        const res = await openai.chat.completions.create({
-            model: "gpt-4o-mini",  // or "gpt-4" or your preferred model
+        const { steamId } = req.params;
+        //get games for gpt context
+        const gamesResponse = await axios.get(
+            `${BASE_URL}/IPlayerService/GetOwnedGames/v0001/`, {
+            headers: {
+                'Accept': 'application/json'
+            }, params: {
+                key: STEAM_API_KEY,
+                steamid: steamId,
+                include_appinfo: true,
+                include_played_free_games: true
+            }
+        }
+        );
+        const gamesData = gamesResponse.data.response;
+        const userGames = gamesData.games
+
+        const openaiResponse = await openai.chat.completions.create({
+            model: "gpt-4o-mini",
             messages: [
-                { role: "user", content: "What game do you recommend I play?" }
-            ],
-            functions: [
                 {
-                    name: "game_recommendations",
-                    description: "Based on the user's played games, recommend 5 games they might like, including the game name and a link to the game on Steam",
-                    parameters: {
-                        type: "object",
-                        properties: {
-                            recommendations: {
-                                type: "array",
-                                items: {
-                                    type: "object",
-                                    properties: {
-                                        game_name: { type: "string", description: "Name of the game" },
-                                        steam_link: { type: "string", description: "Link to the game on Steam" }
-                                    },
-                                    required: ["game_name", "steam_link"]
-                                }
-                            }
-                        },
-                        required: ["recommendations"]
-                    }
+                    role: "user",
+                    content: `Heres my game data ${gamesData} and heres my owned games ${userGames}. Based on these games I've played, what 5 games would you recommend I try next? Please provide specific game recommendations with brief explanations of why I might like them.`
                 }
             ],
-            function_call: "auto"
+            max_tokens: 500,
+            temperature: 1
         });
 
-        // The model might call the function with its response
-        const message = response.choices[0].message;
+        const recommendation = openaiResponse.choices[0].message.content;
 
-        res.json({ recommendations: message.recommendations });
+        res.json({
+            recommendation: recommendation,
+            userGames: topGames
+        });
     } catch (error) {
         console.error('gpt error fetching recommendations:', error);
         res.status(500).json({ error: 'Failed to fetch game recommendations with GPT' });
