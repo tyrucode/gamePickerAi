@@ -251,11 +251,12 @@ router.get('/askingForRecs/:steamId', async (req, res) => {
 
 
 
-        const recommendation = openaiResponse.choices[0].message.content;
+        const recommendation = openaiResponse
 
         res.json({
             recommendation: recommendation
         });
+
     } catch (error) {
         console.error('gpt error fetching recommendations:', error);
         res.status(500).json({ error: 'Failed to fetch game recommendations with GPT' });
