@@ -82,7 +82,7 @@ button:active {
   box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
 }
 
-/* Additional Steam-like styling */
+/* steam-like styling */
 .steam-card {
   background: linear-gradient(135deg, var(--background-light) 0%, var(--background) 100%);
   border: 1px solid var(--border-color);
