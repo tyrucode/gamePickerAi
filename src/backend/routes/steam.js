@@ -93,12 +93,12 @@ router.get('/user/:encodedUrl', async (req, res) => {
         }
         // preparing object to whole api response data
         const responseData = {
-            steamId: userData.steamid, 
-            personaName: userData.personaname, 
-            avatarUrl: userData.avatarfull || userData.avatarmedium || userData.avatar, 
-            profileUrl: userData.profileurl, 
-            countryCode: userData.loccountrycode, 
-            timeCreated: userData.timecreated 
+            steamId: userData.steamid,
+            personaName: userData.personaname,
+            avatarUrl: userData.avatarfull || userData.avatarmedium || userData.avatar,
+            profileUrl: userData.profileurl,
+            countryCode: userData.loccountrycode,
+            timeCreated: userData.timecreated
         };
         // sending response back to the client
         console.log('sending res:', responseData);
@@ -163,7 +163,11 @@ router.get('/games/:steamId', async (req, res) => {
 
 // using the response from steam api to feed game information to GPT for custom gpt recommendations
 router.get('/askingForRecs/:steamId', async (req, res) => {
+    console.log('🔥 GPT ROUTE HIT!');
+    console.log('Steam ID:', req.params.steamId);
+    console.log('Full request URL:', req.url);
     try {
+        console.log('starting gpt request');
         //regular steam request for owned games
         const { steamId } = req.params;
         const gamesResponse = await axios.get(
@@ -182,20 +186,21 @@ router.get('/askingForRecs/:steamId', async (req, res) => {
         const gamesData = gamesResponse.data.response;
         const userGames = gamesData.games;
         // creating open ai response using games data for prompt
-        const openaiResponse = await openai.responses.create({
-            model: "gpt-4.1",
+        const openaiResponse = await openai.chat.completions.create({
+            model: "gpt-4o",
             messages: [
                 {
                     role: "user",
-                    content: `Heres my game data ${userGames}. Based on these games I've played, what 5 games would you recommend I try next? Please provide specific game recommendations with brief explanations of why I might like them.`
+                    content: `based on my steam gaming history and hours, please reccomend me three games to play, with short explanations of why i will like them based on my preferences: ${JSON.stringify(userGames)}
+               format your response clearly with game titles and reasons.`
                 }
             ],
             max_tokens: 500,
-            temperature: 1
+            temperature: 0.7
         });
         // logging the openai response for debugging
-        console.log('openai response:', openaiResponse);
-        const recommendation = openaiResponse
+        const recommendation = openaiResponse.choices[0].message.content;
+        console.log('gpt recommendation received:', recommendation);
         //saving response and returning it to client
         res.json({
             recommendation: recommendation
@@ -206,6 +211,11 @@ router.get('/askingForRecs/:steamId', async (req, res) => {
         res.status(500).json({ error: 'Failed to fetch game recommendations with GPT' });
     }
 })
+
+router.get('/test', (req, res) => {
+    console.log("✅ Test route hit!");
+    res.send("Test successful");
+});
 
 // THIS ROUTE USES STEAM API FOR GAME RECCOMMENDATIONS, NOT GPT
 // THIS ONE IS RETIRED

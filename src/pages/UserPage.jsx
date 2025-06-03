@@ -44,7 +44,6 @@ function UserPage() {
 
 
     async function handleGetReccomendations() {
-        setLoading(true);
         setErrorGPT(null);
         setGptAnswer("");
         try {
@@ -58,8 +57,6 @@ function UserPage() {
         } catch (error) {
             console.error('error fetching reccomendation:', error);
             setErrorGPT('Failed to fetch recommendations from OpenAi, please try again later or refresh.');
-        } finally {
-            setLoading(false);
         }
     }
 
