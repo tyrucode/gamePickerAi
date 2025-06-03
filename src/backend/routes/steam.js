@@ -163,9 +163,7 @@ router.get('/games/:steamId', async (req, res) => {
 
 // using the response from steam api to feed game information to GPT for custom gpt recommendations
 router.get('/askingForRecs/:steamId', async (req, res) => {
-    console.log('🔥 GPT ROUTE HIT!');
-    console.log('Steam ID:', req.params.steamId);
-    console.log('Full request URL:', req.url);
+    console.log(' GPT ROUTE HIT!');
     try {
         console.log('starting gpt request');
         //regular steam request for owned games
@@ -212,13 +210,10 @@ router.get('/askingForRecs/:steamId', async (req, res) => {
     }
 })
 
-router.get('/test', (req, res) => {
-    console.log("✅ Test route hit!");
-    res.send("Test successful");
-});
 
-// THIS ROUTE USES STEAM API FOR GAME RECCOMMENDATIONS, NOT GPT
-// THIS ONE IS RETIRED
+// Retired route for game recommendations
+// This route was used to get game recommendations based on the user's Steam ID, without using GPT.
+
 
 // route to get 5 random / barely played games
 // router.get('/recommendations/:steamId', async (req, res) => {

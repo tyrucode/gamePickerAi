@@ -1,13 +1,16 @@
 import { useParams } from "react-router";
 import { useState, useEffect } from "react";
+import BarLoader from "../components/BarLoader";
 
 function UserPage() {
     const { steamUrl } = useParams();
     const [userData, setUserData] = useState(null);
     const [games, setGames] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
+    const [gptloading, setGptLoading] = useState(false);
     const [gptAnswer, setGptAnswer] = useState("");
     const [errorGPT, setErrorGPT] = useState(null);
+    const [talkedToGPT, setTalkedToGPT] = useState(false);
 
     useEffect(() => {
         const fetchUserData = async () => {
@@ -46,6 +49,8 @@ function UserPage() {
     async function handleGetReccomendations() {
         setErrorGPT(null);
         setGptAnswer("");
+        setGptLoading(true);
+        setTalkedToGPT(true);
         try {
             const response = await fetch(`http://localhost:5000/api/steam/askingForRecs/${userData.steamId}`);
             if (!response.ok) {
@@ -57,15 +62,10 @@ function UserPage() {
         } catch (error) {
             console.error('error fetching reccomendation:', error);
             setErrorGPT('Failed to fetch recommendations from OpenAi, please try again later or refresh.');
-        }
-    }
+        } finally {
+            setGptLoading(false);
 
-    if (loading) {
-        return (
-            <div className="flex justify-center items-center min-h-[50vh]">
-                <div className="text-[var(--text-color)] text-xl">Loading Steam profile...</div>
-            </div>
-        );
+        }
     }
 
 
@@ -78,7 +78,7 @@ function UserPage() {
                             <img
                                 src={userData.avatarUrl}
                                 alt={userData.personaName}
-                                className="w-20 h-20 rounded"
+                                className="w-20 h-20 rounded hover:scale-115 transition-all duration-200 ease-in-out"
                             />
                             <div>
                                 <h2 className="text-2xl font-bold text-[var(--text-color)]">
@@ -93,19 +93,36 @@ function UserPage() {
 
                     {/* throw gpt talking right here */}
                     <div className="steam-card p-6">
-                        <h1 className="text-2xl font-bold text-[var(--text-color)]">Ask ChatGPT!</h1>
-                        <button
-                            onClick={handleGetReccomendations}
-                            className="w-half px-8 py-3 text-lg font-medium rounded tracking-wide"
-                            disabled={loading}
-                        >
-                            {loading ? "Loading..." : "Based on my past games, what should I play?"}
-                        </button>
+                        <h1 className="text-2xl font-bold text-[var(--text-color)] mb-4">Ask ChatGPT!</h1>
 
+                        {talkedToGPT ? (
+                            <p className="text-lg font-medium text-[var(--text-color)] mb-4">
+                                Based on your games played and hours, ChatGPT recommends:
+                            </p>
+                        ) : (
+                            <button
+                                onClick={handleGetReccomendations}
+                                className="w-half px-8 py-3 text-lg font-medium rounded tracking-wide mb-4"
+                                disabled={loading}
+                            >
+                                {loading ? "Loading..." : "Based on my past games, what should I play?"}
+                            </button>
+                        )}
+                        <div className="mockup-window bg-base-300 border border-base-300">
+                            <div className="h-80 overflow-auto p-4">
+                                {gptloading ? (
+                                    <BarLoader />
+                                ) : errorGPT ? (
+                                    <p className="text-red-500">{errorGPT}</p>
+                                ) : (
+                                    <pre className="whitespace-pre-wrap text-[var(--text-color)]">
+                                        {gptAnswer}
+                                    </pre>
+                                )}
+                            </div>
+                        </div>
                         <div className="mt-4">
-                            <h2 className="text-lg font-semibold">ANSWER:</h2>
-                            {errorGPT && <p className="text-red-500">{errorGPT}</p>}
-                            <pre className="whitespace-pre-wrap text-[var(--text-color)]">{gptAnswer}</pre>
+
                         </div>
                     </div>
                 </>
@@ -123,7 +140,7 @@ function UserPage() {
                                     <img
                                         src={`https://media.steampowered.com/steamcommunity/public/images/apps/${game.appid}/${game.img_icon_url}.jpg`}
                                         alt={game.name}
-                                        className="w-8 h-8"
+                                        className="w-8 h-8 hover:scale-115 transition-all duration-200 ease-in-out"
                                     />
                                     <span className="text-[var(--text-color)]">{game.name}</span>
                                 </div>
