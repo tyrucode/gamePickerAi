@@ -118,6 +118,7 @@ function UserPage() {
                                     <pre className="whitespace-pre-wrap text-[var(--text-color)]">
                                         {gptAnswer}
                                     </pre>
+
                                 )}
                             </div>
                         </div>

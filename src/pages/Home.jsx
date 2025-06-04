@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router"
 import { useState } from "react";
-
+import SpringModal from "../components/SpringModal"
 function Home() {
     const navigate = useNavigate();
     const [steamUrl, setSteamUrl] = useState("")
@@ -36,6 +36,7 @@ function Home() {
                         Find Games
                     </button>
                 </form>
+                <SpringModal />
             </div>
 
             <div className="mt-8 text-center">

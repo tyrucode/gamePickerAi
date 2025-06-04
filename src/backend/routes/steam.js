@@ -196,7 +196,7 @@ router.get('/askingForRecs/:steamId', async (req, res) => {
             max_tokens: 500,
             temperature: 0.7
         });
-        // logging the openai response for debugging
+        //logging the openai response for debugging
         const recommendation = openaiResponse.choices[0].message.content;
         console.log('gpt recommendation received:', recommendation);
         //saving response and returning it to client
