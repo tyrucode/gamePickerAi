@@ -5,7 +5,7 @@ import { useState } from "react";
 const ExampleWrapper = () => {
     const [isOpen, setIsOpen] = useState(false);
     return (
-        <div className="mt-4  grid place-content-center">
+        <div className="mt-4 grid place-content-center">
             <button
                 onClick={() => setIsOpen(true)}
                 className="bg-gradient-to-r from-violet-600 to-indigo-600 text-white font-medium px-4 py-2 rounded hover:opacity-90 transition-opacity"
@@ -18,6 +18,24 @@ const ExampleWrapper = () => {
 };
 
 const SpringModal = ({ isOpen, setIsOpen }) => {
+    const [copySuccess, setCopySuccess] = useState(false);
+    const steamUrl = "https://steamcommunity.com/profiles/76561198357014255/";
+
+    const handleCopyToClipboard = async () => {
+        try {
+            await navigator.clipboard.writeText(steamUrl);
+            setCopySuccess(true);
+            setTimeout(() => setCopySuccess(false), 2000);
+        } catch (err) {
+            const textArea = document.createElement('textarea');
+            textArea.value = steamUrl;
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            document.body.removeChild(textArea);
+        }
+    };
+
     return (
         <AnimatePresence>
             {isOpen && (
@@ -55,11 +73,10 @@ const SpringModal = ({ isOpen, setIsOpen }) => {
                                     Go back
                                 </button>
                                 <button
-                                    onClick={() => setIsOpen(false)}
-                                    className="copy-btn bg-white hover:opacity-90 transition-opacity text-indigo-600 font-semibold w-full py-2 rounded"
-                                    data-clipboard-text="Just because you can doesn't mean you should — clipboard.js"
+                                    onClick={handleCopyToClipboard}
+                                    className="bg-white hover:opacity-90 transition-opacity text-indigo-600 font-semibold w-full py-2 rounded"
                                 >
-                                    Copy SteamID to Clipboard!
+                                    {copySuccess ? "Copied!" : "Copy Steam URL!"}
                                 </button>
                             </div>
                         </div>
