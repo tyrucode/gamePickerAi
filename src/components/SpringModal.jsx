@@ -51,7 +51,7 @@ const SpringModal = ({ isOpen, setIsOpen }) => {
                         animate={{ scale: 1, rotate: "0deg" }}
                         exit={{ scale: 0, rotate: "0deg" }}
                         onClick={(e) => e.stopPropagation()}
-                        className="bg-gradient-to-br from-violet-600 to-indigo-600 text-white p-6 rounded-lg w-full max-w-lg shadow-xl cursor-default relative overflow-hidden"
+                        className="bg-gradient-to-br from-[var(--background)] to-[var(--background-light)] text-white p-6 rounded-lg w-full max-w-lg shadow-xl cursor-default relative overflow-hidden"
                     >
                         <FiAlertCircle className="text-white/10 rotate-12 text-[250px] absolute z-0 -top-24 -left-24" />
                         <div className="relative z-10">
@@ -59,7 +59,7 @@ const SpringModal = ({ isOpen, setIsOpen }) => {
                                 <FiAlertCircle />
                             </div>
                             <h3 className="text-3xl font-bold text-center mb-2">
-                                No Steam URL but wanna try?
+                                No Steam URL but want to try?
                             </h3>
                             <p className="text-center mb-6">
                                 Try out my Steam profile to see how the app works! You can always

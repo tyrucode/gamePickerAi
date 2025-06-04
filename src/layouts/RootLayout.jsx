@@ -1,7 +1,7 @@
 // imports
 import { Outlet } from "react-router"
 import { NavLink } from "react-router"
-//might branch root layout later for more advanced features
+
 function RootLayout() {
     return (
         <div className="min-h-screen">
