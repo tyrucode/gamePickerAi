@@ -1,6 +1,8 @@
 import { useParams } from "react-router";
 import { useState, useEffect } from "react";
 import BarLoader from "../components/BarLoader";
+import { DivOrigami } from "../components/LogoOrigami";
+
 
 function UserPage() {
     const { steamUrl } = useParams();
@@ -110,6 +112,8 @@ function UserPage() {
                         )}
                         <div className="mockup-window bg-base-300 border border-base-300">
                             <div className="h-80 overflow-auto p-4">
+                                {!talkedToGPT && <DivOrigami  />}
+                                
                                 {gptloading ? (
                                     <BarLoader />
                                 ) : errorGPT ? (
