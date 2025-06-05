@@ -53,7 +53,7 @@ function UserPage() {
         setGptLoading(true);
         setTalkedToGPT(true);
         try {
-            const response = await fetch(`https://steam-game-finder-orcin.vercel.app/api/steam/askingForRecs/${userData.steamId}`);
+            const response = await fetch(`https://steam-game-finder-orcin.vercel.app//api/steam/askingForRecs/${userData.steamId}`);
             if (!response.ok) {
                 throw new Error('Failed to fetch recommendations from OpenAI');
             }

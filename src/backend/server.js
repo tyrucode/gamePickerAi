@@ -14,6 +14,10 @@ const allowedOrigins = [
     'http://127.0.0.1:5173',
     'https://steam-game-finder-orcin.vercel.app/'
 ];
+
+//to make changes switch routes back to 'http://localhost:5000' for development
+// and 'https://steam-game-finder-orcin.vercel.app/' for production
+
 // cors configuration
 app.use(cors({
     origin: allowedOrigins,
