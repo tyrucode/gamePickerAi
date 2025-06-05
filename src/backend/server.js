@@ -8,11 +8,11 @@ dotenv.config();
 
 // initializing express app
 const app = express();
-const PORT = 5000;
+const PORT = process.env.PORT || 5000;
 const allowedOrigins = [
     'http://localhost:5173',
     'http://127.0.0.1:5173',
-    'https://steam-game-finder-orcin.vercel.app/'
+    'https://steam-game-finder-orcin.vercel.app'
 ];
 
 //to make changes switch routes back to 'http://localhost:5000' for development
