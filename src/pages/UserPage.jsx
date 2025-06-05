@@ -13,7 +13,6 @@ function UserPage() {
     const [gptAnswer, setGptAnswer] = useState("");
     const [errorGPT, setErrorGPT] = useState(null);
     const [talkedToGPT, setTalkedToGPT] = useState(false);
-
     useEffect(() => {
         const fetchUserData = async () => {
             try {
@@ -112,8 +111,8 @@ function UserPage() {
                         )}
                         <div className="mockup-window bg-base-300 border border-base-300">
                             <div className="h-80 overflow-auto p-4">
-                                {!talkedToGPT && <DivOrigami  />}
-                                
+                                {!talkedToGPT && <DivOrigami />}
+
                                 {gptloading ? (
                                     <BarLoader />
                                 ) : errorGPT ? (

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { SiSteam , SiGithub, SiOpenai } from "react-icons/si";
+import { SiSteam, SiOpenai, SiGithub } from "react-icons/si";
 import { twMerge } from "tailwind-merge";
 
 export const DivOrigami = () => {
@@ -13,7 +13,11 @@ export const DivOrigami = () => {
           </LogoItem>,
           <LogoItem key={2} className="bg-[var(--background-light)] text-[var(--text-secondary)]">
             <SiOpenai />
+          </LogoItem>,
+          <LogoItem key={3} className="bg-[var(--background-light)] text-[var(--text-secondary)]">
+            <SiGithub />
           </LogoItem>
+
         ]}
       />
     </section>
