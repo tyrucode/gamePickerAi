@@ -21,13 +21,13 @@ function UserPage() {
 
                 console.log('fetching data for your steam url:', steamUrl);
 
-                const userRes = await fetch(`http://localhost:5000/api/steam/user/${encodeURIComponent(steamUrl)}`);
+                const userRes = await fetch(`https://steam-game-finder-orcin.vercel.app/api/steam/user/${encodeURIComponent(steamUrl)}`);
                 if (!userRes.ok) throw new Error('Failed to fetch user');
                 const user = await userRes.json();
                 console.log('user response:', user);
                 setUserData(user);
 
-                const gamesRes = await fetch(`http://localhost:5000/api/steam/games/${user.steamId}`);
+                const gamesRes = await fetch(`https://steam-game-finder-orcin.vercel.app/api/steam/games/${user.steamId}`);
                 if (!gamesRes.ok) throw new Error('Failed to fetch games');
                 const gamesData = await gamesRes.json();
                 console.log('games response:', gamesData);
@@ -53,7 +53,7 @@ function UserPage() {
         setGptLoading(true);
         setTalkedToGPT(true);
         try {
-            const response = await fetch(`http://localhost:5000/api/steam/askingForRecs/${userData.steamId}`);
+            const response = await fetch(`https://steam-game-finder-orcin.vercel.app/api/steam/askingForRecs/${userData.steamId}`);
             if (!response.ok) {
                 throw new Error('Failed to fetch recommendations from OpenAI');
             }
