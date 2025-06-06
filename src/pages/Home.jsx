@@ -4,12 +4,46 @@ import SpringModal from "../components/SpringModal"
 function Home() {
     const navigate = useNavigate();
     const [steamUrl, setSteamUrl] = useState("")
+    const [validationError, setValidationError] = useState("")
+
+    const validateSteamUrl = (url) => {
+        if (!url || url.trim() === "") {
+            return "Please enter a Steam profile URL";
+        }
+
+        try {
+            new URL(url);
+        } catch {
+            return "Please enter a valid URL (must start with http:// or https://)";
+        }
+
+        if (!url.includes('steamcommunity.com')) {
+            return "Please enter a valid Steam community URL";
+        }
+        const steamPatterns = [
+            /steamcommunity\.com\/profiles\/\d+/,      // Direct Steam ID
+            /steamcommunity\.com\/id\/[^\/]+/          // Custom URL
+        ];
+
+        // Check if URL matches expected Steam patterns
+        const isValidSteamUrl = steamPatterns.some(pattern => pattern.test(url));
+
+        if (!isValidSteamUrl) {
+            return "Please enter a valid Steam profile URL (e.g., https://steamcommunity.com/profiles/123456 or https://steamcommunity.com/id/username)";
+        }
+
+        return "";
+    }
+
+
     //when the url button is submitted
     const onSubmit = (e) => {
-        //dont refresh
         e.preventDefault()
-
-        navigate(`/userPage/${encodeURIComponent(steamUrl)}`)
+        const error = validateSteamUrl(steamUrl);
+        setValidationError(error);
+        if (error === '') {
+            navigate(`/userPage/${encodeURIComponent(steamUrl)}`);
+        }
     }
 
     return (
@@ -22,13 +56,21 @@ function Home() {
                     <input
                         type="text"
                         value={steamUrl}
-                        onChange={(e) => setSteamUrl(e.target.value)}
+                        onChange={(e) => {
+                            setSteamUrl(e.target.value);
+                            setValidationError(validateSteamUrl(e.target.value));
+                        }}
                         id="myTextBox"
                         name="myTextBox"
                         placeholder="https://steamcommunity.com/profiles/..."
                         className="w-full px-4 py-3 text-base rounded focus:outline-none transition-all duration-200"
                         required
                     />
+                    {validationError && (
+                        <p className="text-red-400 text-sm mt-2 px-1">
+                            {validationError}
+                        </p>
+                    )}
                     <button
                         className="w-full px-8 py-3 text-lg font-medium rounded uppercase tracking-wide"
                         type="submit"
