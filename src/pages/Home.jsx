@@ -59,7 +59,6 @@ function Home() {
                         value={steamUrl}
                         onChange={(e) => {
                             setSteamUrl(e.target.value);
-                            setValidationError(validateSteamUrl(e.target.value));
                         }}
                         id="myTextBox"
                         name="myTextBox"
