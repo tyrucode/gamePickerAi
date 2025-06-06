@@ -7,6 +7,15 @@ function Home() {
     const [validationError, setValidationError] = useState("")
 
     const validateSteamUrl = (url) => {
+        if (!url || url.trim() === "") {
+            return "Please enter a Steam profile URL";
+        }
+
+        try {
+            new URL(url);
+        } catch {
+            return "Please enter a valid URL (must start with http:// or https://)";
+        }
 
         if (!url.includes('steamcommunity.com')) {
             return "Please enter a valid Steam community URL";
@@ -29,13 +38,14 @@ function Home() {
 
     //when the url button is submitted
     const onSubmit = (e) => {
-        e.preventDefault()
+        e.preventDefault();
         const error = validateSteamUrl(steamUrl);
         setValidationError(error);
-        if (error === '') {
+        if (error === "") {
             navigate(`/userPage/${encodeURIComponent(steamUrl)}`);
         }
-    }
+    };
+
 
     return (
         <div className="flex flex-col justify-center items-center min-h-[60vh]">
