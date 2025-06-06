@@ -8,12 +8,6 @@ function Home() {
 
     const validateSteamUrl = (url) => {
 
-        try {
-            new URL(url);
-        } catch {
-            return "Please enter a valid URL (must start with http:// or https://)";
-        }
-
         if (!url.includes('steamcommunity.com')) {
             return "Please enter a valid Steam community URL";
         }
