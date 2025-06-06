@@ -8,34 +8,42 @@ function UserPage() {
     const { steamUrl } = useParams();
     const [userData, setUserData] = useState(null);
     const [games, setGames] = useState([]);
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
     const [gptloading, setGptLoading] = useState(false);
     const [gptAnswer, setGptAnswer] = useState("");
     const [errorGPT, setErrorGPT] = useState(null);
+    const [error, setError] = useState(null);
     const [talkedToGPT, setTalkedToGPT] = useState(false);
+
     useEffect(() => {
         const fetchUserData = async () => {
             try {
                 setLoading(true);
-
+                setError(null);
 
                 console.log('fetching data for your steam url:', steamUrl);
 
                 const userRes = await fetch(`https://steam-game-finder-orcin.vercel.app/api/steam/user/${encodeURIComponent(steamUrl)}`);
-                if (!userRes.ok) throw new Error('Failed to fetch user');
+                if (!userRes.ok) {
+                    const errorData = await userRes.json();
+                    throw new Error(errorData.error || 'Failed to fetch user');
+                }
                 const user = await userRes.json();
                 console.log('user response:', user);
                 setUserData(user);
 
                 const gamesRes = await fetch(`https://steam-game-finder-orcin.vercel.app/api/steam/games/${user.steamId}`);
-                if (!gamesRes.ok) throw new Error('Failed to fetch games');
+                if (!gamesRes.ok) {
+                    const errorData = await gamesRes.json();
+                    throw new Error(errorData.error || 'Failed to fetch games');
+                }
                 const gamesData = await gamesRes.json();
                 console.log('games response:', gamesData);
                 setGames(gamesData.games || []);
 
-
             } catch (err) {
                 console.error('error fetching data:', err);
+                setError(err.message);
             } finally {
                 setLoading(false);
             }
@@ -45,7 +53,6 @@ function UserPage() {
             fetchUserData();
         }
     }, [steamUrl]);
-
 
     async function handleGetReccomendations() {
         setErrorGPT(null);
@@ -65,10 +72,44 @@ function UserPage() {
             setErrorGPT('Failed to fetch recommendations from OpenAi, please try again later or refresh.');
         } finally {
             setGptLoading(false);
-
         }
     }
 
+    if (loading) {
+        return (
+            <div className="max-w-6xl mx-auto space-y-8">
+                <div className="steam-card p-6">
+                    <div className="text-center">
+                        <h2 className="text-2xl font-bold text-[var(--text-color)] mb-4">
+                            Loading Steam Profile...
+                        </h2>
+                        <BarLoader />
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div className="max-w-6xl mx-auto space-y-8">
+                <div className="steam-card p-6">
+                    <div className="text-center">
+                        <h2 className="text-2xl font-bold text-red-500 mb-4">
+                            Error Loading Profile
+                        </h2>
+                        <p className="text-[var(--text-color)] mb-4">{error}</p>
+                        <button
+                            onClick={() => window.location.reload()}
+                            className="px-6 py-2 text-base font-medium rounded"
+                        >
+                            Try Again
+                        </button>
+                    </div>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div key={steamUrl} className="max-w-6xl mx-auto space-y-8">
@@ -92,7 +133,7 @@ function UserPage() {
                         </div>
                     </div>
 
-                    {/* throw gpt talking right here */}
+                    {/* GPT section */}
                     <div className="steam-card p-6">
                         <h1 className="text-2xl font-bold text-[var(--text-color)] mb-4">Ask ChatGPT!</h1>
 
@@ -104,9 +145,9 @@ function UserPage() {
                             <button
                                 onClick={handleGetReccomendations}
                                 className="w-half px-8 py-3 text-lg font-medium rounded tracking-wide mb-4"
-                                disabled={loading}
+                                disabled={gptloading}
                             >
-                                {loading ? "Loading..." : "Based on my past games, what should I play?"}
+                                {gptloading ? "Loading..." : "Based on my past games, what should I play?"}
                             </button>
                         )}
                         <div className="mockup-window bg-base-300 border border-base-300">
@@ -121,12 +162,8 @@ function UserPage() {
                                     <pre className="whitespace-pre-wrap text-[var(--text-color)]">
                                         {gptAnswer}
                                     </pre>
-
                                 )}
                             </div>
-                        </div>
-                        <div className="mt-4">
-
                         </div>
                     </div>
                 </>
