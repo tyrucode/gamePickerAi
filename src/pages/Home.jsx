@@ -7,9 +7,6 @@ function Home() {
     const [validationError, setValidationError] = useState("")
 
     const validateSteamUrl = (url) => {
-        if (!url || url.trim() === "") {
-            return "Please enter a Steam profile URL";
-        }
 
         try {
             new URL(url);
