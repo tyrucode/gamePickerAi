@@ -163,11 +163,16 @@ router.get('/games/:steamId', async (req, res) => {
 
 // using the response from steam api to feed game information to GPT for custom gpt recommendations
 router.get('/askingForRecs/:steamId', async (req, res) => {
-    console.log(' GPT ROUTE HIT!');
+    console.log('gpt route hit');
     try {
         console.log('starting gpt request');
         //regular steam request for owned games
         const { steamId } = req.params;
+
+        if (!steamId) {
+            return res.status(400).json({ error: 'Steam ID is required' });
+        }
+
         const gamesResponse = await axios.get(
             `${BASE_URL}/IPlayerService/GetOwnedGames/v0001/`, {
             headers: {
@@ -180,35 +185,104 @@ router.get('/askingForRecs/:steamId', async (req, res) => {
             }
         }
         );
+
         // saving steam data from api
         const gamesData = gamesResponse.data.response;
+
+        if (!gamesData || !gamesData.games || gamesData.games.length === 0) {
+            return res.status(404).json({
+                error: 'No games found for this Steam profile or profile is private'
+            });
+        }
+
         const userGames = gamesData.games;
+        console.log(`Found ${userGames.length} games for user`);
+
+        // limiting data for less gpt token usage and better performance
+        const topGames = userGames
+            .sort((a, b) => (b.playtime_forever || 0) - (a.playtime_forever || 0))
+            .slice(0, 20)
+            .map(game => ({
+                name: game.name,
+                playtime_forever: game.playtime_forever || 0,
+                appid: game.appid
+            }));
+
+        console.log('sending request to openai');
+
         // creating open ai response using games data for prompt
         const openaiResponse = await openai.chat.completions.create({
-            model: "gpt-4o",
+            model: "gpt-4o-mini",
             messages: [
                 {
+                    role: "system",
+                    content: "You are a helpful gaming assistant that provides game recommendations based on a user's Steam gaming history. Provide exactly 3 game recommendations with brief explanations telling them why they would like the game and comparing its similarities to games the user has played."
+                },
+                {
                     role: "user",
-                    content: `based on my steam gaming history and hours, please reccomend me three games to play, with short explanations of why i will like them based on my preferences: ${JSON.stringify(userGames)}
-               format your response clearly with game titles and reasons.`
+                    content: `Based on my Steam gaming history below, please recommend me 3 games I should play next. Focus on games similar to my most played titles.
+
+My top games and hours played:
+${topGames.map(game => `- ${game.name}: ${Math.floor(game.playtime_forever / 60)} hours`).join('\n')}
+
+Please format your response as:
+1. [Game Name] - [Brief reason why I'd like it]
+2. [Game Name] - [Brief reason why I'd like it]  
+3. [Game Name] - [Brief reason why I'd like it]`
                 }
             ],
             max_tokens: 500,
             temperature: 0.7
         });
+
         //logging the openai response for debugging
         const recommendation = openaiResponse.choices[0].message.content;
-        console.log('gpt recommendation received:', recommendation);
+
         //saving response and returning it to client
         res.json({
-            recommendation: recommendation
+            recommendation: recommendation,
+            gamesAnalyzed: topGames.length
         });
 
     } catch (error) {
-        console.error('gpt error fetching recommendations:', error);
-        res.status(500).json({ error: 'Failed to fetch game recommendations with GPT' });
+        console.error('GPT error details:', {
+            message: error.message,
+            response: error.response?.data,
+            status: error.response?.status,
+            stack: error.stack
+        });
+
+        // Handle specific OpenAI errors
+        if (error.response?.status === 429) {
+            return res.status(429).json({
+                error: 'Rate limit exceeded. Please try again in a few minutes.'
+            });
+        }
+
+        if (error.response?.status === 401) {
+            return res.status(500).json({
+                error: 'API authentication failed. Please contact support.'
+            });
+        }
+
+        if (error.response?.status >= 500) {
+            return res.status(503).json({
+                error: 'OpenAI service is temporarily unavailable. Please try again later.'
+            });
+        }
+
+        // Check if it's a Steam API error
+        if (error.response?.data?.response) {
+            return res.status(500).json({
+                error: 'Failed to fetch Steam game data'
+            });
+        }
+
+        res.status(500).json({
+            error: 'Failed to generate game recommendations. Please try again.'
+        });
     }
-})
+});
 
 
 // Retired route for game recommendations
